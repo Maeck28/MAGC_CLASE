@@ -1,3 +1,4 @@
 ﻿  main.cpp
+c:\users\marco\desktop\magc_clase\clase\clase\main.cpp(40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
   clase.vcxproj -> C:\Users\Marco\Desktop\MAGC_CLASE\clase\Debug\clase.exe
   clase.vcxproj -> C:\Users\Marco\Desktop\MAGC_CLASE\clase\Debug\clase.pdb (Full PDB)

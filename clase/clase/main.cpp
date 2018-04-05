@@ -6,295 +6,200 @@
 //*************	Version: Visual Studio 2015						******//
 //************************************************************//
 
-//#include <gl/gl.h>     // The GL Header File
-//#include <GL/glut.h>   // The GL Utility Toolkit (Glut) Header
-//#include <stdlib.h
 #include "Main.h"
-// LOS OBJETOS SE MUEVEN CON MAYUSCULAS Y MINUSCULAS
-//EL HOMBRO SE MUEVE CON LA LETRA H 
-// CODO CON LA LETRA C
-//MUÑECA CON LA LETRA M
-// DEDO PULGAR CON O
-// DEDO INDICE CON I
-// DEDO MEDIO CON U
-// DEDO ANULAR Y
-// DEDO MEÑIQUE CON T
-
-float angHombro = 0.0f;
-float angCodo = 0.0f;
-float angMuni = 0.0f;
-float angDedP = 0.0f;
-float angDedI = 0.0f;
-float angMed = 0.0;
-float angAn = 0.0;
-float angMe = 0.0;
-
-float transZ = -5.0f;
-float transX = 0.0f;
-float angleX = 0.0f;
-float angleY = 0.0f;
-int screenW = 0.0;
-int screenH = 0.0;
 
 
-GLfloat Position[] = { 0.0f, 3.0f, 0.0f, 1.0f };			// Light Position
-GLfloat Position2[] = { 0.0f, 0.0f, -5.0f, 1.0f };			// Light Position
+// Variables used to calculate frames per second: (Windows)
+DWORD dwFrames = 0;
+DWORD dwCurrentTime = 0;
+DWORD dwLastUpdateTime = 0;
+DWORD dwElapsedTime = 0;
 
-void InitGL(void)     // Inicializamos parametros
+
+//Variables used to create movement
+
+int sol = 0;
+int mercurio = 0;
+int venus = 0;
+int tierra = 0;
+int marte = 0;
+int jupiter = 0;
+int saturno = 0;
+int urano = 0;
+int neptuno = 0;
+int luna = 0; 
+float camaraZ = 0.0;
+float camaraX = 0.0;
+
+
+GLfloat SunDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };			// Diffuse Light Values
+GLfloat SunSpecular[] = { 1.0, 1.0, 1.0, 1.0 };				// Specular Light Values
+GLfloat SunPosition[] = { 0.0f, 0.0f, 0.0f, 1.0f };			// Light Position
+
+GLfloat EarthDiffuse[] = { 0.2f, 0.2f, 1.0f, 1.0f };			// Tierra
+GLfloat EarthSpecular[] = { 0.8, 0.8, 0.8, 1.0 };
+GLfloat EarthShininess[] = { 50.0 };
+
+GLfloat MoonDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };			// Luna
+GLfloat MoonSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat MoonShininess[] = { 50.0 };
+
+GLfloat MarsDiffuse[] = { 0.8f, 0.4f, 0.1f, 1.0f };			// Marte
+GLfloat MarsSpecular[] = { 1.0, 0.5, 0.0, 1.0 };
+GLfloat MarsShininess[] = { 50.0 };
+
+void InitGL(GLvoid)     // Inicializamos parametros
 {
-
-	glShadeModel(GL_SMOOTH);							// Habilitamos Smooth Shading
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Negro de fondo
+
 	glClearDepth(1.0f);									// Configuramos Depth Buffer
 	glEnable(GL_DEPTH_TEST);							// Habilitamos Depth Testing
-
-														//Configuracion luz
-	glLightfv(GL_LIGHT0, GL_POSITION, Position);
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, Position2);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-
 	glDepthFunc(GL_LEQUAL);								// Tipo de Depth Testing a realizar
-	glEnable(GL_COLOR_MATERIAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-}
 
-void prisma(void)
-{
-	GLfloat vertice[8][3] = {
-		{ 0.5 ,-0.5, 0.5 },    //Coordenadas Vértice 0 V0
-		{ -0.5 ,-0.5, 0.5 },    //Coordenadas Vértice 1 V1
-		{ -0.5 ,-0.5, -0.5 },    //Coordenadas Vértice 2 V2
-		{ 0.5 ,-0.5, -0.5 },    //Coordenadas Vértice 3 V3
-		{ 0.5 ,0.5, 0.5 },    //Coordenadas Vértice 4 V4
-		{ 0.5 ,0.5, -0.5 },    //Coordenadas Vértice 5 V5
-		{ -0.5 ,0.5, -0.5 },    //Coordenadas Vértice 6 V6
-		{ -0.5 ,0.5, 0.5 },    //Coordenadas Vértice 7 V7
-	};
 
-	glBegin(GL_POLYGON);	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3fv(vertice[0]);
-	glVertex3fv(vertice[4]);
-	glVertex3fv(vertice[7]);
-	glVertex3fv(vertice[1]);
-	glEnd();
-
-	glBegin(GL_POLYGON);	//Right
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3fv(vertice[0]);
-	glVertex3fv(vertice[3]);
-	glVertex3fv(vertice[5]);
-	glVertex3fv(vertice[4]);
-	glEnd();
-
-	glBegin(GL_POLYGON);	//Back
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3fv(vertice[6]);
-	glVertex3fv(vertice[5]);
-	glVertex3fv(vertice[3]);
-	glVertex3fv(vertice[2]);
-	glEnd();
-
-	glBegin(GL_POLYGON);  //Left
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glVertex3fv(vertice[1]);
-	glVertex3fv(vertice[7]);
-	glVertex3fv(vertice[6]);
-	glVertex3fv(vertice[2]);
-	glEnd();
-
-	glBegin(GL_POLYGON);  //Bottom
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3fv(vertice[0]);
-	glVertex3fv(vertice[1]);
-	glVertex3fv(vertice[2]);
-	glVertex3fv(vertice[3]);
-	glEnd();
-
-	glBegin(GL_POLYGON);  //Top
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3fv(vertice[4]);
-	glVertex3fv(vertice[5]);
-	glVertex3fv(vertice[6]);
-	glVertex3fv(vertice[7]);
-	glEnd();
 }
 
 void display(void)   // Creamos la funcion donde se dibuja
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Limiamos pantalla y Depth Buffer
-														//glMatrixMode(GL_MODELVIEW);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	glTranslatef(transX, 0.0f, transZ);
-	glRotatef(angleY, 0.0, 1.0, 0.0);
-	glRotatef(angleX, 1.0, 0.0, 0.0);
-	//Poner Código Aquí.
-
-	//Hombro
-	glRotatef(angHombro, 0, 0, 1);
+	glTranslatef(camaraX, 0.0, -5.0 + camaraZ);//camara
+	//sol								   //sol
 	glPushMatrix();
-	glScalef(1, 2, 2);
-	glColor3f(1, 1, 1);
-	prisma();
+	glPushMatrix();
+	glRotatef(sol, 0.0, 1.0, 0.0);	//El Sol gira sobre su eje
+	glColor3f(1.0, 1.0, 0.0);	//Sol amarillo
+	glutSolidSphere(1.9, 30, 30);  //Draw Sun (radio,H,V);
+	glPopMatrix();
+	//mercurio
+	glPushMatrix();
+	glRotatef(mercurio, 0, 1, 1);//Traslacion mercurio 
+	glTranslatef(5, 0, 0);
+	glColor3f(0.937, 0.286, 0.062);
+	glRotatef(mercurio, 1, 0, 0);//rotacion mercurio 
+	glutWireSphere(0.5, 20, 20);
+	glPopMatrix();
+	//Venus
+	glPushMatrix();
+	glRotatef(venus, 0, 1, 1); 
+	glTranslatef(8, 0, 0);
+	glColor3f(0.952, 0.635, 0.203);
+	glRotatef(venus, 1, 0, 0);
+	glutWireSphere(0.7, 30, 30);
 	glPopMatrix();
 
-	//Bicep
+	//tierra
 	glPushMatrix();
+	glRotatef(tierra, 0, 1, 1); 
+	glTranslatef(11, 0, 0);
+	glColor3f(0.0705, 0.403, 0.945);
+	//glRotatef(tierra, 1, 0, 0);
+	glutWireSphere(0.9, 30, 30);
+	glPushMatrix();
+	glRotatef(tierra, 0, 1, 1);
 	glTranslatef(2, 0, 0);
-	glScalef(3, 2, 2);
-	glColor3f(0, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	//Codo
-	glRotatef(angCodo, 0, 1, 0);
-	glPushMatrix();
-	glTranslatef(3.75, 0, 0);
-	glScalef(0.5, 2, 2);
-	glColor3f(1, 0, 0);
-	prisma();
-	glPopMatrix();
-
-	//Antebrazo
-	glPushMatrix();
-	glTranslatef(6, 0, 0);
-	glScalef(4, 2, 2);
-	glColor3f(0, 1, 0);
-	prisma();
-	glPopMatrix();
-
-	//Muñeca
-	glRotatef(angMuni, 0, 1, 0);
-	glPushMatrix();
-	glTranslatef(8.25, 0, 0);
-	glScalef(0.5, 2, 2);
 	glColor3f(1, 1, 1);
-	prisma();
+	glRotatef(luna, 0, 1, 0);
+	glutWireSphere(0.4, 30, 30);
 	glPopMatrix();
-
-	//Mano
+	glPopMatrix();
+	//marte
 	glPushMatrix();
-	glTranslatef(9.5, 0, 0);
-	glScalef(2, 2, 2);
-	glColor3f(0, 0, 1);
-	prisma();
+	glRotatef(marte, 0, 1, 1);
+	glTranslatef(14, 0, 0);
+	glColor3f(1.0, 0.0, 0.0);
+	glRotatef(marte, 1, 0, 0); 
+	glutWireSphere(0.5, 30, 30);
 	glPopMatrix();
-
-    //dedo pulgar
+	//jupiter
 	glPushMatrix();
-	glRotatef(angDedP, 1, 0, 0);
-	glTranslatef(9.75, 1.25, 0);
-	glScalef(.3,.5, 2);
-	glColor3f(1, 0, 1);
-	prisma();
-	glPopMatrix();
-
+	glRotatef(jupiter, 0, 1, 1);
+	glTranslatef(17, 0, 0);
+	glColor3f(0.517, 0.419, 0.13337);
+	//glRotatef(jupiter, 1, 0, 0); 
+	glutWireSphere(1.3, 30, 30);
+	//luna1
 	glPushMatrix();
-	glRotatef(angDedP, 1, 0, 0);
-	glTranslatef(9.75, 1.75, 0);
-	glScalef(.3, .5, 2);
-	glColor3f(1, 1, 0);
-	prisma();
+	glRotatef(jupiter, 0, 1, 1);
+	glTranslatef(2, 0, 0);
+	glColor3f(1, 1, 1);
+	glRotatef(luna, 0, 1, 0);
+	glutWireSphere(0.4, 30, 30);
 	glPopMatrix();
+	//luna2
+	glPushMatrix();
+	glRotatef(jupiter, 0, 1, 1);
+	glTranslatef(-2, 0, 0);
+	glColor3f(1, 1, 1);
+	glRotatef(luna, 0, 1, 0);
+	glutWireSphere(0.4, 30, 30);
+	glPopMatrix();
+	glPopMatrix();
+	//saturno
+	glPushMatrix();
+	glRotatef(saturno, 0, 1, 1);
+	glTranslatef(20, 0, 0);
+	glColor3f(1.0, 1.0, 0.0);
+	//glRotatef(saturno, 1, 0, 0);
+	glutWireSphere(1, 30, 30);
+	glPushMatrix();
 	
-	//dedo indice
+	glColor3f(1, 1, 1);
+	glutWireTorus(1.2, 1.2, 20, 20);
+	glRotatef(saturno, 1, 0, 0);
+	glPopMatrix();
+	glPopMatrix();
+	//urano
 	glPushMatrix();
-	glRotatef(angDedI, 0, 1, 0);
-	glTranslatef(10.75, .75, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 0, 1);
-	prisma();
+	glRotatef(urano, 0, 1, 1);
+	glTranslatef(22, 0, 0);
+	glColor3f(0.133337, 0.9001, 0.713);
+	glRotatef(urano, 1, 0, 0);
+	glutWireSphere(0.5, 30, 30);
+	glPopMatrix();
+	//neptuno
+	glPushMatrix();
+	glRotatef(neptuno, 0, 1, 1); 
+	glTranslatef(25, 0, 0);
+	glColor3f(0.145, 0.125, 0.835);
+	glRotatef(neptuno, 1, 0, 0); 
+	glutWireSphere(0.6, 30, 30);
 	glPopMatrix();
 
-	glPushMatrix();
-	glRotatef(angDedI, 0, 1, 0);
-	glTranslatef(11.25, .75, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 1, 0);
-	prisma();
 	glPopMatrix();
+	 
 
-	glPushMatrix();
-	glRotatef(angDedI, 0, 1, 0);
-	glTranslatef(11.75, .75, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(0, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	//dedo medio
-	
-	glPushMatrix();
-	glRotatef(angMed, 0, 1, 0);
-	glTranslatef(10.75, .25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	glPushMatrix();
-	glRotatef(angMed, 0, 1, 0);
-	glTranslatef(11.25, .25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 1, 0);
-	prisma();
-	glPopMatrix();
-
-	glPushMatrix();
-	glRotatef(angMed, 0, 1, 0);
-	glTranslatef(11.75, .25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(0, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	//dedo anular
-	glPushMatrix();
-	glRotatef(angAn, 0, 1, 0);
-	glTranslatef(10.75, -.25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	glPushMatrix();
-	glRotatef(angAn, 0, 1, 0);
-	glTranslatef(11.25, -.25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 1, 0);
-	prisma();
-	glPopMatrix();
-
-	glPushMatrix();
-	glRotatef(angAn, 0, 1, 0);
-	glTranslatef(11.75, -.25, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(0, 0, 1);
-	prisma();
-	glPopMatrix();
-	//meñique
-	glPushMatrix();
-	glRotatef(angMe, 0, 1, 0);
-	glTranslatef(10.75, -.75, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 0, 1);
-	prisma();
-	glPopMatrix();
-
-	glPushMatrix();
-	glRotatef(angMe, 0, 1, 0);
-	glTranslatef(11.25, -.75, 0);
-	glScalef(.5, .3, 2);
-	glColor3f(1, 1, 0);
-	prisma();
-	glPopMatrix();
-
-	
 	glutSwapBuffers();
-	// Swap The Buffers
+
+}
+
+void animacion()
+{
+	// Calculate the number of frames per one second:
+	//dwFrames++;
+	dwCurrentTime = GetTickCount(); // Even better to use timeGetTime()
+	dwElapsedTime = dwCurrentTime - dwLastUpdateTime;
+
+	if (dwElapsedTime >= 30)
+	{
+		sol = (sol - 8) % 360;
+		mercurio = (mercurio - 8 ) % 360;
+		venus = (venus - 7) % 360;
+		tierra = (tierra - 6) % 360;
+		marte = (marte - 5) % 360;
+		jupiter = (jupiter - 4) % 360;
+		saturno = (saturno - 3) % 360;
+		urano = (urano - 2) % 360;
+		neptuno = (neptuno - 1) % 360;
+		luna = (luna - 3) % 360;
+
+
+		dwLastUpdateTime = dwCurrentTime;
+	}
+
+	glutPostRedisplay();
 }
 
 void reshape(int width, int height)   // Creamos funcion Reshape
@@ -310,101 +215,49 @@ void reshape(int width, int height)   // Creamos funcion Reshape
 	glLoadIdentity();
 
 	// Tipo de Vista
-	//glOrtho(-5,5,-5,5,0.2,20);	
+
 	glFrustum(-0.1, 0.1, -0.1, 0.1, 0.1, 50.0);
 
 	glMatrixMode(GL_MODELVIEW);							// Seleccionamos Modelview Matrix
-														//glLoadIdentity();									
+														//glLoadIdentity();
 }
 
 void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 {
 	switch (key) {
-	case 'w':
+	case 'w':   //Movimientos de camara
 	case 'W':
-		transZ += 0.2f;
+		camaraZ += 0.5f;
 		break;
 	case 's':
 	case 'S':
-		transZ -= 0.2f;
+		camaraZ -= 0.5f;
 		break;
 	case 'a':
 	case 'A':
-		transX += 0.2f;
+		camaraX -= 0.5f;
 		break;
 	case 'd':
 	case 'D':
-		transX -= 0.2f;
+		camaraX += 0.5f;
 		break;
 
-	case 'h':
-		if (angHombro <= 80)
-			angHombro += 1;
-		break;
-	case 'H':
-		if (angHombro >= -80)
-			angHombro -= 1;
-		break;
-	case 'c':
-		if (angCodo <=0)
-			angCodo += 1;
-		break;
-	case 'C':
-		if (angCodo >= -120)
-			angCodo -= 1;
-		break;
-	case 'm':
-		if (angMuni <= 0)
-			angMuni += 1;
-		break;
-	case 'M':
-		if (angMuni >= -70)
-			angMuni -= 1;
-		break;
-	case 'o':
-		if (angDedP <= 100)
-			angDedP += 1;
-		break;
-	case 'O':
-		if (angDedP >= 0)
-			angDedP -= 1;
-		break;
-	case 'i':
-		if (angDedI <= 0)
-			angDedI += 1;
-		break;
+	case 'i':		//Movimientos de Luz
 	case 'I':
-		if (angDedI >= -100)
-			angDedI -= 1;
+
 		break;
-	case 'u':
-		if (angMed <= 0)
-			angMed += 1;
+	case 'k':
+	case 'K':
+
 		break;
-	case 'U':
-		if (angMed >= -100)
-			angMed -= 1;
-		break;
-	case 'y':
-		if (angAn <= 0)
-			angAn += 1;
-		break;
-	case 'Y':
-		if (angAn >= -100)
-			angAn -= 1;
-		break;
-	case 't':
-		if (angMe <= 0)
-			angMe += 1;
-		break;
-	case 'T':
-		if (angMe >= -100)
-			angMe -= 1;
+
+	case 'l':   //Activamos/desactivamos luz
+	case 'L':
 		break;
 	case 27:        // Cuando Esc es presionado...
 		exit(0);   // Salimos del programa
 		break;
-	default:        // 
+	default:        // Cualquier otra
 		break;
 	}
 	glutPostRedisplay();
@@ -413,17 +266,17 @@ void keyboard(unsigned char key, int x, int y)  // Create Keyboard Function
 void arrow_keys(int a_keys, int x, int y)  // Funcion para manejo de teclas especiales (arrow keys)
 {
 	switch (a_keys) {
-	case GLUT_KEY_UP:		// Presionamos tecla ARRIBA...
-		angleX += 2.0f;
+	case GLUT_KEY_UP:     // Presionamos tecla ARRIBA...
+
 		break;
-	case GLUT_KEY_DOWN:		// Presionamos tecla ABAJO...
-		angleX -= 2.0f;
+	case GLUT_KEY_DOWN:               // Presionamos tecla ABAJO...
+
 		break;
 	case GLUT_KEY_LEFT:
-		angleY += 2.0f;
+
 		break;
 	case GLUT_KEY_RIGHT:
-		angleY -= 2.0f;
+
 		break;
 	default:
 		break;
@@ -436,20 +289,16 @@ int main(int argc, char** argv)   // Main Function
 {
 	glutInit(&argc, argv); // Inicializamos OpenGL
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); // Display Mode (Clores RGB y alpha | Buffer Doble )
-	screenW = glutGet(GLUT_SCREEN_WIDTH);
-	screenH = glutGet(GLUT_SCREEN_HEIGHT);
 	glutInitWindowSize(500, 500);	// Tamaño de la Ventana
-	glutInitWindowPosition(0, 0);	//Posicion de la Ventana
-	glutCreateWindow("Practica 5"); // Nombre de la Ventana
-	printf("Resolution H: %i \n", screenW);
-	printf("Resolution V: %i \n", screenH);
+	glutInitWindowPosition(20, 60);	//Posicion de la Ventana
+	glutCreateWindow("Practica 6"); // Nombre de la Ventana
 	InitGL();						// Parametros iniciales de la aplicacion
 	glutDisplayFunc(display);  //Indicamos a Glut función de dibujo
 	glutReshapeFunc(reshape);	//Indicamos a Glut función en caso de cambio de tamano
 	glutKeyboardFunc(keyboard);	//Indicamos a Glut función de manejo de teclado
 	glutSpecialFunc(arrow_keys);	//Otras
+	glutIdleFunc(animacion);
 	glutMainLoop();          // 
 
 	return 0;
 }
-
