@@ -1,4 +1,3 @@
-
 #include "texture.h"
 
 bool CTexture::LoadTGA(char *filename)			// Loads A TGA File Into Memory
