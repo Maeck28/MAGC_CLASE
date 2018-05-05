@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="figuras.h" />
-    <ClInclude Include="include\Main.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
